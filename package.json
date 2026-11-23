@@ -2,13 +2,13 @@
   "name": "phone-call-ui",
   "version": "0.1.0",
   "description": "Phone / FaceTime-style call screen as a dependency-free Web Component — slide to answer, in-call controls, captions, voice. One command lets your AI agent wire it into any frontend. Includes a SillyTavern extension.",
-  "homepage": "https://github.com/ysuhao/phonecall-mint",
+  "homepage": "https://github.com/Link2theWorld/phonecall-mint",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ysuhao/phonecall-mint.git"
+    "url": "git+https://github.com/Link2theWorld/phonecall-mint.git"
   },
   "bugs": {
-    "url": "https://github.com/ysuhao/phonecall-mint/issues"
+    "url": "https://github.com/Link2theWorld/phonecall-mint/issues"
   },
   "type": "module",
   "main": "./src/index.js",
