@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>phonecall-mint screens</title>
+<style>
+  html, body { margin: 0; width: 390px; height: 844px; overflow: hidden; background: #1b2738; }
+  phone-call { --pc-height: 844px; --pc-aspect: 390 / 844; --pc-radius: 0px; --pc-shadow: none; }
+</style>
+</head>
+<body>
+<phone-call id="p" theme="diary" silent no-vibrate controls="speaker,camera,mute,keypad,end"></phone-call>
+<script type="module">
+  import '../src/phone-call.js';
+  const v = new URLSearchParams(location.search).get('v') || '1';
+  const p = document.getElementById('p');
+  p.setAttribute('status-time', v === '1' ? '21:36' : '21:37');
+  const meta = { name: '阿澈', subtitle: '语音通话', avatar: '../demo/assets/avatar-blue.png' };
+  await document.fonts.ready;
+  p.incoming(meta);
+  if (v === '2') {
+    p.answer();
+    p._startedAt = Date.now() - 83000;
+    p.caption('醒了没？快起来啦。', { who: 'them' });
+    p.caption('早就起来啦', { who: 'me' });
+    p.caption('那今天早点回来，我等你。', { who: 'them' });
+  }
+</script>
+</body>
+</html>
