@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>phone-call 演示</title>
+<style>
+  :root { color-scheme: light dark; --bg: #eef0ef; --panel: #fff; --ink: #1c1c1e; --muted: #6b6f6d; --line: #d9dcda; --accent: #2f7d4f; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #121413; --panel: #1c1f1d; --ink: #eceeed; --muted: #9aa09d; --line: #2c302e; --accent: #4cc27a; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; display: flex; gap: 40px; align-items: center; justify-content: center; padding: 24px 16px; flex-wrap: wrap; }
+  .stage { position: relative; display: grid; place-items: center; min-width: 300px; }
+  .stage .placeholder { color: var(--muted); font-size: 14px; text-align: center; }
+  phone-call { --pc-height: min(760px, calc(100dvh - 48px)); }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px; width: min(360px, 100%); display: grid; gap: 14px; }
+  h1 { font-size: 18px; margin: 0; }
+  p.note { margin: 0; color: var(--muted); font-size: 13px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  button { font: inherit; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: inherit; cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+  input[type=text], select { font: inherit; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--ink); }
+  .check { display: flex; gap: 8px; align-items: center; color: var(--ink); }
+  pre { margin: 0; max-height: 160px; overflow: auto; font-size: 12px; background: rgba(127,127,127,.08); border-radius: 8px; padding: 8px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="placeholder" id="ph">点右边的按钮开始一通电话</div>
+    <phone-call id="call" theme="diary" name="阿澈" subtitle="语音通话" controls="speaker,camera,mute,keypad,end"></phone-call>
+  </div>
+
+  <div class="panel">
+    <h1>phone-call 演示</h1>
+    <p class="note">角色回复是写死的示例台词，声音用浏览器自带的语音合成。接到酒馆后换成真正的模型和配音。</p>
+    <div class="row">
+      <button class="primary" id="ring">角色打来</button>
+      <button id="dial">我打过去</button>
+      <button id="remote">对方挂断</button>
+    </div>
+    <label>来电人名字 <input type="text" id="name" value="阿澈"></label>
+    <label>副标题 <input type="text" id="sub" value="语音通话"></label>
+    <label>接听方式
+      <select id="style"><option value="slide">滑动接听（锁屏）</option><option value="buttons">接听 / 拒绝两个按钮</option></select>
+    </label>
+    <label>按钮栏
+      <select id="controls">
+        <option value="speaker,camera,mute,keypad,end">扬声器 · 摄像头 · 静音 · 打字 · 挂断</option>
+        <option value="speaker,camera,mute,flip,end">扬声器 · 摄像头 · 静音 · 翻转 · 挂断（视频同款）</option>
+        <option value="speaker,mute,keypad,end">扬声器 · 静音 · 打字 · 挂断</option>
+      </select>
+    </label>
+    <label>主题
+      <select id="theme">
+        <option value="diary" selected>手帐（Flover Diary）</option>
+        <option value="">经典</option>
+      </select>
+    </label>
+    <label>接通后
+      <select id="view">
+        <option value="full" selected>人物铺满画面</option>
+        <option value="avatar">圆形头像</option>
+      </select>
+    </label>
+    <label>头像
+      <select id="avatar">
+        <option value="blue" selected>蓝发男生（Codex 画的）</option>
+        <option value="svg">简笔插画</option>
+        <option value="">不要头像</option>
+      </select>
+    </label>
+    <label class="check"><input type="checkbox" id="voice" checked> 用浏览器语音念出来</label>
+    <label class="check"><input type="checkbox" id="mic"> 开麦克风说话（Chrome / Edge）</label>
+    <pre id="log"></pre>
+  </div>
+
+<script type="module">
+  import '../src/phone-call.js';
+  import { createCallSession } from '../src/call-session.js';
+
+  const ui = document.getElementById('call');
+  const $ = (id) => document.getElementById(id);
+  const log = (s) => { $('log').textContent = `${s}\n${$('log').textContent}`.slice(0, 2000); };
+
+  // A placeholder avatar drawn in SVG — not a real person.
+  const AVATAR = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6c6b8"/><stop offset="1" stop-color="#b9cfe0"/></linearGradient></defs>
+      <rect width="200" height="200" fill="url(#g)"/>
+      <path d="M40 200c4-44 30-66 60-66s56 22 60 66z" fill="#fdfaf6"/>
+      <path d="M58 98c-6-44 14-70 42-70s48 26 42 70c-2 16-6 34-10 46H68c-4-12-8-30-10-46z" fill="#3b2b2b"/>
+      <ellipse cx="100" cy="92" rx="30" ry="36" fill="#f8dccf"/>
+      <path d="M68 80c10-22 52-30 66-4-18-6-44-6-66 4z" fill="#3b2b2b"/>
+      <circle cx="89" cy="94" r="3.2" fill="#3b2b2b"/><circle cx="111" cy="94" r="3.2" fill="#3b2b2b"/>
+      <path d="M92 110q8 6 16 0" stroke="#c9736a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="82" cy="104" r="5" fill="#f3a9a0" opacity=".5"/><circle cx="118" cy="104" r="5" fill="#f3a9a0" opacity=".5"/>
+    </svg>`);
+
+  // Scripted stand-in for an LLM, streamed in small chunks like a real one.
+  const OPENERS = {
+    incoming: ['醒了没？快起来啦。', '喂，起床了吗？太阳都晒屁股了！'],
+    outgoing: ['喂？怎么突然打给我呀。', '嗯？这么早打过来，想我了？'],
+  };
+  const NAGS = [
+    '我不是说过别随便用洗面奶吗？用我给你买的那支呀。',
+    '早饭吃了没？别又空着肚子去上班。',
+    '昨天几点睡的？老实交代。',
+    '好啦好啦，不说你了。快去洗脸，收拾得干干净净的。',
+    '记得带伞，今天下午要下雨。',
+  ];
+  let n = 0;
+  async function* reply(userText, { direction, signal }) {
+    const pool = userText == null ? OPENERS[direction] : NAGS;
+    const line = userText == null ? pool[Math.floor(Math.random() * pool.length)] : pool[n++ % pool.length];
+    await new Promise((r) => setTimeout(r, 350));
+    for (const ch of line.match(/.{1,4}/gu)) {
+      if (signal.aborted) return;
+      await new Promise((r) => setTimeout(r, 40));
+      yield ch;
+    }
+  }
+
+  let session;
+  function build() {
+    session?.destroy();
+    session = createCallSession(ui, {
+      reply,
+      listen: $('mic').checked,
+      speak: $('voice').checked ? null : async () => undefined, // returning nothing = silent
+      onTurn: (t) => log(`${t.role === 'user' ? '我' : ui.getAttribute('name')}：${t.text}`),
+      onEnd: ({ reason, duration }) => log(`— 挂断 (${reason}) ${Math.round(duration / 1000)}s —`),
+    });
+  }
+
+  const AVATARS = { blue: './assets/avatar-blue.png', svg: AVATAR };
+  function meta() {
+    return { name: $('name').value || '阿澈', subtitle: $('sub').value, avatar: AVATARS[$('avatar').value] || '' };
+  }
+  function apply() {
+    ui.setAttribute('answer-style', $('style').value);
+    ui.setAttribute('controls', $('controls').value);
+    if ($('theme').value) ui.setAttribute('theme', $('theme').value); else ui.removeAttribute('theme');
+    ui.setAttribute('active-view', $('view').value);
+    if (!$('avatar').value) { ui.removeAttribute('avatar'); ui.removeAttribute('background'); }
+  }
+
+  $('ring').onclick = () => { apply(); build(); session.ring(meta()); };
+  $('dial').onclick = () => { apply(); build(); session.dial(meta()); };
+  $('remote').onclick = () => ui.hangup('remote');
+  ui.addEventListener('pc-statechange', (e) => { $('ph').hidden = e.detail.state !== 'idle'; log(`state: ${e.detail.state}`); });
+  ui.addEventListener('pc-toggle', (e) => log(`toggle ${e.detail.control} → ${e.detail.on}`));
+  ui.addEventListener('pc-action', (e) => log(`action ${e.detail.control}`));
+</script>
+</body>
+</html>

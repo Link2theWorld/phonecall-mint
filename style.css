@@ -1,0 +1,6 @@
+/* SillyTavern extension styles for phone-call. SPDX-License-Identifier: MIT */
+#phone_call_settings .pc-grid { display: grid; gap: 8px; }
+#phone_call_settings label { display: flex; flex-direction: column; gap: 2px; }
+#phone_call_settings label.checkbox_label { flex-direction: row; align-items: center; gap: 6px; }
+#phone_call_settings small { opacity: .7; }
+#phone_call_settings .pc-row { display: flex; gap: 6px; flex-wrap: wrap; }

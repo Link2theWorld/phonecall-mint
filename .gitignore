@@ -1,0 +1,4 @@
+# reference material (downloaded video, frames) — not part of the project
+research/
+node_modules/
+.claude/

@@ -1,0 +1,11 @@
+{
+  "display_name": "Phone Call 电话",
+  "loading_order": 100,
+  "requires": [],
+  "optional": [],
+  "js": "index.js",
+  "css": "style.css",
+  "author": "phonecall-mint contributors",
+  "version": "0.1.0",
+  "homePage": "https://github.com/ysuhao/phonecall-mint"
+}

@@ -1,0 +1,64 @@
+{
+  "name": "phone-call-ui",
+  "version": "0.1.0",
+  "description": "Phone / FaceTime-style call screen as a dependency-free Web Component — slide to answer, in-call controls, captions, voice. One command lets your AI agent wire it into any frontend. Includes a SillyTavern extension.",
+  "homepage": "https://github.com/ysuhao/phonecall-mint",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ysuhao/phonecall-mint.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ysuhao/phonecall-mint/issues"
+  },
+  "type": "module",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./phone-call": {
+      "types": "./src/index.d.ts",
+      "default": "./src/phone-call.js"
+    },
+    "./session": {
+      "types": "./src/index.d.ts",
+      "default": "./src/call-session.js"
+    },
+    "./AI.md": "./AI.md",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "phone-call-ui": "./bin/phone-call-ui.js"
+  },
+  "files": [
+    "src",
+    "bin",
+    "AI.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "./src/phone-call.js",
+    "./src/index.js"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "web-component",
+    "custom-element",
+    "phone-call",
+    "facetime",
+    "voice-chat",
+    "tts",
+    "speech-recognition",
+    "sillytavern",
+    "roleplay",
+    "ai-companion",
+    "llm"
+  ],
+  "license": "MIT"
+}
