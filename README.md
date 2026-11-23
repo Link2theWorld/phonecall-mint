@@ -1,10 +1,38 @@
-# phone-call 📞
+# phonecall-mint 📞
 
-一个可以嵌进任何前端的「打电话」界面组件，附带 SillyTavern（酒馆）扩展。
+让酒馆角色给你打电话。一个可以嵌进任何前端的「打电话」界面组件，附带 SillyTavern（酒馆）扩展。
+
+![来电](promo/promo-1.png)
+
+## 酒馆一键安装
+
+**方法一：在酒馆里装（最简单）**
+打开酒馆 → 顶栏「扩展」 → 「安装扩展」 → 粘贴下面这个地址 → 确定：
+
+```
+https://github.com/Link2theWorld/phonecall-mint
+```
+
+**方法二：Windows 一行命令**（在 PowerShell 里粘贴回车，自动找到酒馆目录）
+
+```powershell
+irm https://raw.githubusercontent.com/Link2theWorld/phonecall-mint/main/install.ps1 | iex
+```
+
+**方法三：Mac / Linux / 安卓 Termux 一行命令**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Link2theWorld/phonecall-mint/main/install.sh | bash
+```
+
+找不到酒馆时脚本会问你路径，也可以先设好 `ST_DIR`。再跑一次就是更新。装好后刷新酒馆，魔杖菜单里会有「打给角色」「让角色打来」，也可以输入 `/call`、`/ring`。
+
+## 它能做什么
 
 - 来电页：来电人名字、副标题、模糊背景、**滑动接听**（或「接听 / 拒绝」两个按钮）
 - 拨出页：正在呼叫…、回铃音、取消
-- 通话页：顶部圆形按钮栏（扬声器 / 摄像头 / 静音 / 翻转 / 打字 / 挂断）、名字和计时、头像随说话跳动、实时字幕、打字输入
+- 通话页：接通后角色图从模糊变清晰、**整个人铺满画面**；顶部圆形按钮栏（扬声器 / 摄像头 / 静音 / 翻转 / 打字 / 挂断）、名字和计时、实时字幕、打字输入
+- 两套外观：经典风格，和手帐风格 `theme="diary"`（手写体、贴纸、纸条字幕）
 - 结束页：通话结束 + 时长
 - 来电铃声是代码合成的帕赫贝尔《D 大调卡农》（公版曲目，不带任何音频文件），也可以换成自己的音频
 - 原生 Web Component，零依赖，Shadow DOM 隔离样式，不会和宿主页面打架
